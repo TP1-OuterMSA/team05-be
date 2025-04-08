@@ -21,3 +21,4 @@ EXPOSE 8080
 ENV TZ Asia/Seoul
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]
+
