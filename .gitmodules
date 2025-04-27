@@ -1,0 +1,6 @@
+[submodule "src/main/src/main/avro"]
+	path = src/main/src/main/avro
+	url = https://github.com/Team-Project-MSA-InnerArchitecture/avro.git
+[submodule "src/main/avro"]
+	path = src/main/avro
+	url = https://github.com/Team-Project-MSA-InnerArchitecture/avro.git

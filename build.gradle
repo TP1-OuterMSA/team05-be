@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.github.davidmc24.gradle.plugin.avro' version '1.5.0'
 }
 
 group = 'com.mjmeal'
@@ -19,8 +20,13 @@ configurations {
 	}
 }
 
+avro {
+	fieldVisibility = "PRIVATE"
+}
+
 repositories {
 	mavenCentral()
+	maven { url 'https://packages.confluent.io/maven/' }
 }
 
 dependencies {
@@ -32,6 +38,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.apache.avro:avro:1.11.4'
+	implementation 'io.confluent:kafka-avro-serializer:7.6.0'
 
 	// monitoring
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
