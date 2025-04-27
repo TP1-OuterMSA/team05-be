@@ -23,7 +23,7 @@ public class MealService {
     @Transactional(readOnly = true)
     public MealResponse findMealByDateAndMealType(MealType mealType) {
         String todayStr = LocalDate.now(ZoneId.of("Asia/Seoul"))
-                .format(DateTimeFormatter.ofPattern("MM.dd"));
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         Meal meal = mealRepository.findByDayInfoStartingWithAndMealType(todayStr, mealType);
 
