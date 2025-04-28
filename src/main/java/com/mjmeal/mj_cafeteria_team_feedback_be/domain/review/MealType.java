@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum MealType {
 
+    BREAKFAST("조식"),
     LUNCH("중식"),
     DINNER("석식");
 
@@ -12,5 +13,9 @@ public enum MealType {
 
     MealType(String displayName) {
         this.displayName = displayName;
+    }
+
+    public static MealType from(String value) {
+        return MealType.valueOf(value.toUpperCase());
     }
 }

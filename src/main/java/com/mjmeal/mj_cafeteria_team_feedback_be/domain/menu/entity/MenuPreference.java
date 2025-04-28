@@ -10,17 +10,24 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Menu extends BaseEntity {
+public class MenuPreference extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Menu menu;
+
+    private int count;
+
+    private void increment() {
+        this.count += 1;
+    }
 
     @Builder
-    private Menu(String name) {
-        this.name = name;
+    private MenuPreference(Menu menu, int count) {
+        this.menu = menu;
+        this. count = count;
     }
 }
