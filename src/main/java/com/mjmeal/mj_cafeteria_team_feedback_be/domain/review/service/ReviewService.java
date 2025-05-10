@@ -59,24 +59,32 @@ public class ReviewService {
 
         Map<String, String> menuQuestions = request.getMenuQuestions();
         Map<String, String> menuAnswers = request.getMenuAnswers();
-
         if (menuQuestions != null) {
             for (Map.Entry<String, String> questionEntry : menuQuestions.entrySet()) {
                 if (!StringUtils.hasText(questionEntry.getValue())) {
                     continue;
                 }
+
                 String menuName = questionEntry.getKey();
+                String questionContent = questionEntry.getValue();
                 Menu menu = menuRepository.findByName(menuName);
 
-                Question question = Question.builder()
-                        .content(questionEntry.getValue())
-                        .menu(menu)
-                        .build();
-                questionRepository.save(question);
+                boolean hasQuestion = questionRepository.existsByMenu(menu);
+                Question question;
 
-                if (menuAnswers != null && StringUtils.hasText(menuAnswers.get(questionEntry.getKey()))) {
+                if (!hasQuestion) {
+                    question = Question.builder()
+                            .content(questionContent)
+                            .menu(menu)
+                            .build();
+                    questionRepository.save(question);
+                } else {
+                    question = questionRepository.findByMenu(menu);
+                }
+
+                if (menuAnswers != null && StringUtils.hasText(menuAnswers.get(menuName))) {
                     Answer answer = Answer.builder()
-                            .content(menuAnswers.get(questionEntry.getKey()))
+                            .content(menuAnswers.get(menuName))
                             .review(review)
                             .question(question)
                             .build();
