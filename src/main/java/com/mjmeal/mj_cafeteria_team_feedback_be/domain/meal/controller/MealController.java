@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "식단")
 @RestController
-@RequestMapping("/meals")
+@RequestMapping("/api/team5/meals")
 @RequiredArgsConstructor
 public class MealController {
 
