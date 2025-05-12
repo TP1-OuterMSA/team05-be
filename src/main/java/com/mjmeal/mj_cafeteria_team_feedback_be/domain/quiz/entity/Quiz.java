@@ -26,7 +26,7 @@ public class Quiz extends BaseEntity {
     private List<Choice> choices = new ArrayList<>();
 
     @Column(nullable = false)
-    private Long correctChoiceId;
+    private Long correctChoiceId = 0L;
 
     @Builder
     private Quiz(String question, Long correctChoiceId) {

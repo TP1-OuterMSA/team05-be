@@ -1,5 +1,6 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.choice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.entity.BaseEntity;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.entity.Quiz;
 import jakarta.persistence.*;
@@ -20,6 +21,7 @@ public class Choice extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
