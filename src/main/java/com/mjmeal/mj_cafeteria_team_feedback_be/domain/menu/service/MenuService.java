@@ -1,7 +1,6 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.service;
 
-import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.dto.MenuRequest;
-import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.dto.MenuResponse;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.dto.*;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.entity.Menu;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.entity.MenuPreference;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.entity.MenuPreferenceComment;
@@ -55,13 +54,22 @@ public class MenuService {
     }
 
     @Transactional
-    public void saveFoodList(MenuRequest menuRequest) {
+    public void saveFoodList(MenuSaveRequest menuRequest) {
         wantMenuRepository.deleteAll();
 
-        List<WantMenu> wantMenus = menuRequest.getMenuNames().stream()
+        List<WantMenu> wantMenus = menuRequest.getNames().stream()
                 .map(name -> WantMenu.builder()
                 .name(name)
                 .build()).toList();
         wantMenuRepository.saveAll(wantMenus);
+    }
+
+    @Transactional(readOnly = true)
+    public WantMenuResponse getWantMenu() {
+        List<WantMenu> wantMenus = wantMenuRepository.findAll();
+        List<WantMenuDto> wantMenuDto = wantMenus.stream()
+                .map(menu -> new WantMenuDto(menu.getName()))
+                .toList();
+        return new WantMenuResponse(wantMenuDto);
     }
 }
