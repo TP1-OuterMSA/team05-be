@@ -42,4 +42,10 @@ public class MenuController {
         menuService.saveLikeMenu(menuRequest);
         return ApiResponse.onSuccess(null);
     }
+
+    @PutMapping("/admin/foodList")
+    public ApiResponse<Void> saveFoodList(@RequestBody MenuRequest menuRequest) {
+        menuService.saveFoodList(menuRequest);
+        return ApiResponse.onSuccess(null);
+    }
 }
