@@ -41,4 +41,8 @@ public class Quiz extends BaseEntity {
     public void setCorrectChoiceId(Long correctChoiceId) {
         this.correctChoiceId = correctChoiceId;
     }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
 }

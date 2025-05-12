@@ -7,7 +7,7 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.dto.QuizDto;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.dto.QuizRequest;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.dto.QuizResponse;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.entity.Quiz;
-import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.respository.QuizRepository;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,5 +64,32 @@ public class QuizService {
                 .toList();
 
         return new QuizResponse(quizDtos);
+    }
+
+    @Transactional
+    public void updateQuiz(Long quizId, QuizRequest request) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("퀴즈 없음"));
+
+        quiz.setQuestion(request.getQuestion());
+        quiz.getChoices().clear();
+
+        List<Choice> newChoices = request.getChoices().stream()
+                .map(c -> Choice.builder()
+                        .content(c.getContent())
+                        .quiz(quiz)
+                        .build())
+                .toList();
+
+        choiceRepository.saveAll(newChoices);
+
+        if (request.getCorrectIndex() < 0 || request.getCorrectIndex() >= newChoices.size()) {
+            throw new IllegalArgumentException("정답 인덱스 오류");
+        }
+
+        Long correctChoiceId = newChoices.get(request.getCorrectIndex()).getId();
+        quiz.setCorrectChoiceId(correctChoiceId);
+
+        quizRepository.save(quiz);
     }
 }

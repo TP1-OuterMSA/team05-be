@@ -1,4 +1,4 @@
-package com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.respository;
+package com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.repository;
 
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.quiz.entity.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
