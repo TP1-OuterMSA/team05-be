@@ -2,7 +2,7 @@ package com.mjmeal.mj_cafeteria_team_feedback_be.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.error.ErrorStatus;
+import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.error.ErrorCode;
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.success.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,10 +28,10 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> onFailure(T result){
-        return new ApiResponse<>(false, ErrorStatus._INTERNAL_SERVER_ERROR.getCode(), ErrorStatus._INTERNAL_SERVER_ERROR.getMessage(), result);
+        return new ApiResponse<>(false, ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getMessage(), result);
     }
 
-    public static <T> ApiResponse<T> onFailure(ErrorStatus status, T result){
+    public static <T> ApiResponse<T> onFailure(ErrorCode status, T result){
         return new ApiResponse<>(false, status.getCode(), status.getMessage(), result);
     }
 }

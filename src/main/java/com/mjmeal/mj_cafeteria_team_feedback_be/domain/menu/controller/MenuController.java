@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/menus")
+@RequestMapping("/api/team5/menus")
 @RequiredArgsConstructor
 public class MenuController {
 

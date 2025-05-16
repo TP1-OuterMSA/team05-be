@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "리뷰")
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/api/team5/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
 
