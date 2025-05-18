@@ -43,7 +43,6 @@ public class S3Uploader {
                 .bucket(bucket)
                 .key(key)
                 .contentType(file.getContentType())
-                .acl("public-read")
                 .build();
 
         try {

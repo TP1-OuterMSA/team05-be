@@ -2,6 +2,7 @@ package com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.controller;
 
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.ApiResponse;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.dto.StoreRequest;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.dto.StoreResponse;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.service.StoreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,5 +34,16 @@ public class StoreController {
                                   @RequestPart("image") MultipartFile multipartFile) {
         storeService.save(storeRequest, multipartFile);
         return ApiResponse.onSuccess(null);
+    }
+
+    @Operation(
+            summary = "맛집 조회",
+            description = """
+        맛집을 조회합니다.
+        """
+    )
+    @GetMapping("/admin")
+    public ApiResponse<StoreResponse> getStores() {
+        return ApiResponse.onSuccess(storeService.getStores());
     }
 }
