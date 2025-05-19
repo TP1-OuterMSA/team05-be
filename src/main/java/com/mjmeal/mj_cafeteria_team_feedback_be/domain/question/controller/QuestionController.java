@@ -5,12 +5,14 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.domain.question.dto.QuestionResp
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.question.service.QuestionService;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.MealType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "질문")
 @RestController
 @RequestMapping("/api/team5/questions")
 @RequiredArgsConstructor
