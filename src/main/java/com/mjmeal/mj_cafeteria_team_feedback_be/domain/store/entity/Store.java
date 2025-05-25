@@ -42,7 +42,7 @@ public class Store extends BaseEntity {
         this.url = url;
     }
 
-    public void update(StoreType storeType, String imageUrl, String description, String url) {
+    public void update(StoreType storeType, String name, String image, String description, String url) {
         this.storeType = storeType;
         this.name = name;
         this.image = image;

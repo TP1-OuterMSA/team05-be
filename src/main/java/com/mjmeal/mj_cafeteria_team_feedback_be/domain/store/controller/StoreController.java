@@ -1,6 +1,7 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.controller;
 
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.ApiResponse;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.dto.StoreDeleteRequest;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.dto.StoreRequest;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.dto.StoreResponse;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.store.service.StoreService;
@@ -45,5 +46,17 @@ public class StoreController {
     @GetMapping("/admin")
     public ApiResponse<StoreResponse> getStores() {
         return ApiResponse.onSuccess(storeService.getStores());
+    }
+
+    @Operation(
+            summary = "맛집 삭제",
+            description = """
+        맛집을 조회합니다.
+        """
+    )
+    @DeleteMapping("/admin")
+    public ApiResponse<Void> deleteStores(@RequestBody StoreDeleteRequest storeDeleteRequest) {
+        storeService.deleteStores(storeDeleteRequest);
+        return ApiResponse.onSuccess(null);
     }
 }

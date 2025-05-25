@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class StoreRequest {
+    private Long id;
     private StoreType storeType;
     private String name;
     private String description;
