@@ -1,13 +1,16 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.controller;
 
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.ApiResponse;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.dto.MealRatingResponse;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.dto.MealResponse;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.service.MealService;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.MealType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +43,23 @@ public class MealController {
     @GetMapping("/today")
     public ApiResponse<MealResponse> getTodayMenu(@RequestParam("mealType") MealType mealType) {
         return ApiResponse.onSuccess(mealService.findMealByDateAndMealType(mealType));
+    }
+
+    @Operation(
+        summary = "식단 평균 평점 조회",
+        description = """
+        식단의 평균 평점을 조회합니다.
+
+        ✅ 날짜 (`date`)는 아래와 같이 입력하세요:
+        - ex) 2025-04-15
+
+        🔄 응답 데이터:
+        - 식단 날짜 (yyyy-MM-dd)
+        - 평균 평점
+        """
+    )
+    @GetMapping("/menus/rating/{date}")
+    public ApiResponse<MealRatingResponse> getMealRating(@PathVariable("date") LocalDate date) {
+        return ApiResponse.onSuccess(mealService.getMenuRating(date));
     }
 }
