@@ -23,7 +23,7 @@ public class UserPointLog {
     private User user;
 
     @Column(nullable = false)
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private PointType pointType;
 
     @Column(nullable = false)
