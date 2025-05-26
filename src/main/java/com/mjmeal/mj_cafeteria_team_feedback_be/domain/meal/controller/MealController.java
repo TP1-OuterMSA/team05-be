@@ -8,6 +8,8 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.MealType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +62,7 @@ public class MealController {
     )
     @GetMapping("/menus/rating/{date}")
     public ApiResponse<MealRatingResponse> getMealRating(@PathVariable("date") LocalDate date) {
-        return ApiResponse.onSuccess(mealService.getMenuRating(date));
+        String today = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return ApiResponse.onSuccess(mealService.getMenuRating(today));
     }
 }

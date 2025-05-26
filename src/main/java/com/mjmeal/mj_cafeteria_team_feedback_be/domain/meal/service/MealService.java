@@ -45,10 +45,9 @@ public class MealService {
     }
 
     @Transactional(readOnly = true)
-    public MealRatingResponse getMenuRating(LocalDate date) {
-        String todayStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    public MealRatingResponse getMenuRating(String today) {
 
-        List<Meal> meals = mealRepository.findByDayInfo(todayStr);
+        List<Meal> meals = mealRepository.findByDayInfo(today);
         if (meals.isEmpty()) {
             throw new EntityNotFoundException("해당 날짜의 식단이 존재하지 않습니다.");
         }
@@ -67,15 +66,9 @@ public class MealService {
         BigDecimal sum = ratings.stream()
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<Rating> ratingEntities = menuList.stream()
-            .flatMap(menu -> ratingRepository.findAllByMenu(menu).stream())
-            .toList();
-
-        ratingEntities.forEach(rating -> System.out.println(rating.getId()));
-
         BigDecimal average = ratings.isEmpty() ? BigDecimal.ZERO :
             sum.divide(BigDecimal.valueOf(ratings.size()), 2, RoundingMode.HALF_UP);
 
-        return new MealRatingResponse(todayStr, average);
+        return new MealRatingResponse(today, average);
     }
 }
