@@ -5,6 +5,7 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.RankingType;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.dto.*;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,5 +32,10 @@ public class UserController {
     @GetMapping("/ranking")
     public ApiResponse<List<UserRankingResponse>> getRanking(@RequestParam("rankingType") RankingType rankingType) {
         return ApiResponse.onSuccess(userService.getRanking(rankingType));
+    }
+
+    @GetMapping("/ranking/{date}")
+    public ApiResponse<List<UserRankingResponse>> getDateRanking(@PathVariable("date") LocalDate date) {
+        return ApiResponse.onSuccess(userService.getDateRanking(date));
     }
 }
