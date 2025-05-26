@@ -22,4 +22,6 @@ public interface UserPointLogRepository extends JpaRepository<UserPointLog, Long
 """)
     List<Object[]> findTopEarnedByPeriod(@Param("start") LocalDateTime start,
                                          @Param("end") LocalDateTime end);
+
+    List<UserPointLog> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }
