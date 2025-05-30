@@ -1,5 +1,6 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.service;
 
+import com.mjmeal.mj_cafeteria_team_feedback_be.common.exception.BusinessException;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.answer.entity.Answer;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.answer.repository.AnswerRepository;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.entity.Meal;
@@ -12,7 +13,9 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.entity.Rating;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.repository.RatingRepository;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.dto.ReviewRequest;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.entity.Review;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.entity.ReviewToken;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.repository.ReviewRepository;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.repository.ReviewTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,8 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Map;
+
+import static com.mjmeal.mj_cafeteria_team_feedback_be.common.response.error.ErrorCode.ALREADY_TOKEN;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +36,14 @@ public class ReviewService {
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final RatingRepository ratingRepository;
+    private final ReviewTokenRepository reviewTokenRepository;
 
     @Transactional
     public void save(ReviewRequest request) {
+        if (reviewTokenRepository.findById(request.getToken()).isPresent()) {
+            throw new BusinessException(ALREADY_TOKEN);
+        }
+
         Meal meal = mealRepository.findById(request.getMealId()).orElseThrow();
 
         Review review = Review.builder()
@@ -92,5 +102,19 @@ public class ReviewService {
                 }
             }
         }
+        reviewTokenRepository.save(ReviewToken.from(request.getToken()));
+    }
+
+    public Boolean getUseAble(String token) {
+        if(reviewTokenRepository.findById(token).isPresent()) {
+            return Boolean.FALSE;
+        } else {
+            return Boolean.TRUE;
+        }
+    }
+
+    @Transactional
+    public void registerToken(String token) {
+        reviewTokenRepository.save(ReviewToken.from(token));
     }
 }

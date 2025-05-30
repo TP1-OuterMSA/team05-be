@@ -21,7 +21,8 @@ public enum ErrorCode {
     LOGIN_FAILED(401, "M002", "로그인에 실패했습니다"),
 
     // Business
-    BUSINESS_EXCEPTION_ERROR(400, "B001", "비즈니스 요구사항 예외가 발생했습니다");
+    BUSINESS_EXCEPTION_ERROR(400, "B001", "비즈니스 요구사항 예외가 발생했습니다"),
+    ALREADY_TOKEN(400, "B002", "이미 등록된 리뷰 토큰입니다.");
 
     private final int status;
     private final String code;
