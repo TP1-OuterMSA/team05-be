@@ -1,11 +1,14 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.controller;
 
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.ApiResponse;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.dto.ReviewSummaryResponse;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.MealType;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.dto.ReviewRequest;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "리뷰")
@@ -40,6 +43,19 @@ public class ReviewController {
     }
 
     @Operation(
+            summary = "지난 리뷰 리스트 조회",
+            description = """
+        지난 리뷰 페이지에서 사용될 식단 유형별 리뷰 조회 API 입니다.
+        ✅ 요청 필드:
+        - 'mealType': 학식 유형
+    """
+    )
+    @GetMapping
+    private ApiResponse<ReviewSummaryResponse> getReviewList(@RequestParam("mealType") MealType mealType) {
+        return ApiResponse.onSuccess(reviewService.getReviewSummary(mealType));
+    }
+
+    @Operation(
             summary = "리뷰 토큰 사용가능 여부",
             description = """
         프론트에서 넘기는 리뷰토큰의 사용가능 여부를 조회합니다. ex) url
@@ -61,5 +77,4 @@ public class ReviewController {
     private void registerToken(@PathVariable("token") String token) {
         reviewService.registerToken(token);
     }
-
 }

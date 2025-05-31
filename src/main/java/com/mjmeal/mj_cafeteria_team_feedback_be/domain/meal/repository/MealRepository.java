@@ -12,4 +12,6 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     Meal findByDayInfoStartingWithAndMealType(String dayInfoPrefix, MealType mealType);
 
     List<Meal> findByDayInfo(String todayStr);
+
+    List<Meal> findByMealType(MealType mealType);
 }
