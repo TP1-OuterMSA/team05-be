@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Tag(name = "리뷰")
 @RestController
 @RequestMapping("/api/team5/reviews")
@@ -40,6 +42,19 @@ public class ReviewController {
     public ApiResponse<Void> save(@RequestBody ReviewRequest request) {
         reviewService.save(request);
         return ApiResponse.onSuccess(null);
+    }
+
+    @Operation(
+            summary = "오늘의 리뷰 리스트 조회",
+            description = """
+        오늘의 리뷰 페이지에서 사용될 식단 유형별 리뷰 조회 API 입니다.
+        ✅ 요청 필드:
+        - 'mealType': 학식 유형
+    """
+    )
+    @GetMapping("{date}")
+    private ApiResponse<ReviewSummaryResponse> getReviewList(@PathVariable("date") LocalDate date, @RequestParam("mealType") MealType mealType) {
+        return ApiResponse.onSuccess(reviewService.getTodayReviews(date, mealType));
     }
 
     @Operation(

@@ -24,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -135,6 +138,42 @@ public class ReviewService {
 
         double overallAverageRating = 0.0;
         if (!reviews.isEmpty()) {
+            overallAverageRating = reviews.stream()
+                    .map(review -> {
+                        List<Rating> ratings = ratingRepository.findByReview(review);
+                        return ratings.stream()
+                                .map(Rating::getRating)
+                                .mapToDouble(BigDecimal::doubleValue)
+                                .average()
+                                .orElse(0.0);
+                    })
+                    .mapToDouble(Double::doubleValue)
+                    .average()
+                    .orElse(0.0);
+        }
+
+        List<String> overallOpinions = reviews.stream()
+                .map(Review::getOverallOpinion)
+                .filter(StringUtils::hasText)
+                .toList();
+
+        return ReviewSummaryResponse.builder()
+                .reviewCount(reviewCount)
+                .overallAverageRating(overallAverageRating)
+                .overallOpinions(overallOpinions)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewSummaryResponse getTodayReviews(LocalDate date, MealType mealType) {
+        String dayInfo = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        Meal meal = mealRepository.findByDayInfoStartingWithAndMealType(dayInfo, mealType);
+
+        List<Review> reviews = reviewRepository.findByMeal(meal);
+        long reviewCount = reviews.size();
+
+        double overallAverageRating = 0.0;
+        if (reviewCount > 0) {
             overallAverageRating = reviews.stream()
                     .map(review -> {
                         List<Rating> ratings = ratingRepository.findByReview(review);
