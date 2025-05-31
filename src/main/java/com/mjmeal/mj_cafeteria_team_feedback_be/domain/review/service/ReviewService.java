@@ -4,6 +4,8 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.common.exception.BusinessExcepti
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.answer.entity.Answer;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.answer.repository.AnswerRepository;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.entity.Meal;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.entity.MealMenu;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.repository.MealMenuRepository;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.meal.repository.MealRepository;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.entity.Menu;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.menu.repository.MenuRepository;
@@ -13,6 +15,7 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.dto.ReviewSummaryR
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.entity.Rating;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.repository.RatingRepository;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.MealType;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.dto.MenuReviewSummaryResponse;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.dto.ReviewRequest;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.entity.Review;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.entity.ReviewToken;
@@ -26,10 +29,8 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.mjmeal.mj_cafeteria_team_feedback_be.common.response.error.ErrorCode.ALREADY_TOKEN;
 
@@ -44,6 +45,7 @@ public class ReviewService {
     private final QuestionRepository questionRepository;
     private final RatingRepository ratingRepository;
     private final ReviewTokenRepository reviewTokenRepository;
+    private final MealMenuRepository mealMenuRepository;
 
     @Transactional
     public void save(ReviewRequest request) {
@@ -113,7 +115,7 @@ public class ReviewService {
     }
 
     public Boolean getUseAble(String token) {
-        if(reviewTokenRepository.findById(token).isPresent()) {
+        if (reviewTokenRepository.findById(token).isPresent()) {
             return Boolean.FALSE;
         } else {
             return Boolean.TRUE;
@@ -169,26 +171,57 @@ public class ReviewService {
         String dayInfo = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         Meal meal = mealRepository.findByDayInfoStartingWithAndMealType(dayInfo, mealType);
 
-        List<Review> reviews = reviewRepository.findByMeal(meal);
-        long reviewCount = reviews.size();
+        List<MealMenu> mealMenus = meal.getMealMenus();
+        List<Review> mealReviews = reviewRepository.findByMeal(meal);
+
+        List<MenuReviewSummaryResponse> menuSummaries = mealMenus.stream().map(mealMenu -> {
+            Menu menu = mealMenu.getMenu();
+
+            Question question = questionRepository.findByMenu(menu);
+            String aiQuestion = question != null ? question.getContent() : null;
+
+            List<Rating> ratingsForMenu = mealReviews.stream()
+                    .flatMap(review -> ratingRepository.findByReview(review).stream())
+                    .filter(rating -> rating.getMenu().equals(menu))
+                    .toList();
+
+            double averageRating = 0.0;
+            if (!ratingsForMenu.isEmpty()) {
+                averageRating = ratingsForMenu.stream()
+                        .map(Rating::getRating)
+                        .mapToDouble(BigDecimal::doubleValue)
+                        .average()
+                        .orElse(0.0);
+            }
+
+            List<String> userResponses = mealReviews.stream()
+                    .flatMap(review -> answerRepository.findByReview(review).stream())
+                    .filter(answer -> answer.getQuestion().getMenu().equals(menu))
+                    .map(Answer::getContent)
+                    .filter(StringUtils::hasText)
+                    .toList();
+
+            return new MenuReviewSummaryResponse(
+                    menu.getName(),
+                    averageRating,
+                    aiQuestion,
+                    userResponses
+            );
+        }).toList();
+
+        long reviewCount = mealReviews.size();
 
         double overallAverageRating = 0.0;
-        if (reviewCount > 0) {
-            overallAverageRating = reviews.stream()
-                    .map(review -> {
-                        List<Rating> ratings = ratingRepository.findByReview(review);
-                        return ratings.stream()
-                                .map(Rating::getRating)
-                                .mapToDouble(BigDecimal::doubleValue)
-                                .average()
-                                .orElse(0.0);
-                    })
-                    .mapToDouble(Double::doubleValue)
+        if (!mealReviews.isEmpty()) {
+            overallAverageRating = mealReviews.stream()
+                    .flatMap(review -> ratingRepository.findByReview(review).stream())
+                    .map(Rating::getRating)
+                    .mapToDouble(BigDecimal::doubleValue)
                     .average()
                     .orElse(0.0);
         }
 
-        List<String> overallOpinions = reviews.stream()
+        List<String> overallOpinions = mealReviews.stream()
                 .map(Review::getOverallOpinion)
                 .filter(StringUtils::hasText)
                 .toList();
@@ -197,6 +230,7 @@ public class ReviewService {
                 .reviewCount(reviewCount)
                 .overallAverageRating(overallAverageRating)
                 .overallOpinions(overallOpinions)
+                .menuReviews(menuSummaries)
                 .build();
     }
 }
