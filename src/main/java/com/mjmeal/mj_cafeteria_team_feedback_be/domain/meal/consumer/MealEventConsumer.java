@@ -12,6 +12,7 @@ import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.MealType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +27,12 @@ public class MealEventConsumer {
     private final MenuRepository menuRepository;
     private final MealMenuRepository mealMenuRepository;
 
-    @KafkaListener(topics = "meal.web.crawler.updated", groupId = "web-Crawler")
+    @KafkaListener(
+            topics = "meal.web.crawler.updated",
+            containerFactory = "kafkaListenerContainerMealFactory"
+    )
     @Transactional
-    public void consume(MealEvent event) {
+    public void consume(MealEvent event, Acknowledgment ack) {
         MealType mealType = MealType.from(event.getMealType());
         String date = event.getDate();
         List<String> menuNames = Arrays.asList(event.getMealContents().split(" "));
@@ -49,6 +53,8 @@ public class MealEventConsumer {
                     if (menu == null) {
                         throw new IllegalStateException("Menu 저장 중 충돌 발생");
                     }
+                } finally {
+                    ack.acknowledge();
                 }
             }
 
@@ -58,5 +64,6 @@ public class MealEventConsumer {
                     .build();
             mealMenuRepository.save(mealMenu);
         }
+        ack.acknowledge();
     }
 }
