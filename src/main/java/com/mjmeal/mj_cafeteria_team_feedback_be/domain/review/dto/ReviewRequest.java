@@ -7,6 +7,7 @@ import java.util.Map;
 @Data
 public class ReviewRequest {
 
+    private String token;
     private Long mealId;
     private Map<String, Integer> menuRatings;
     private String overallOpinion;
