@@ -2,12 +2,14 @@ package com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.service;
 
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.exception.BusinessException;
 import com.mjmeal.mj_cafeteria_team_feedback_be.common.response.error.ErrorCode;
+import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.PointType;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.RankingType;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.dto.*;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.entity.User;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.entity.UserPointLog;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.repostiory.UserPointLogRepository;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.user.repostiory.UserRepository;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +66,7 @@ public class UserService {
         userPointLogRepository.save(
                 UserPointLog.builder()
                         .user(user)
+                        .pointType(PointType.QUIZ)
                         .point(userEarnRequest.getPoint())
                         .createdAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .build()
@@ -110,6 +113,21 @@ public class UserService {
 
         return result.stream()
                 .map(r -> new UserRankingResponse((String) r[0], (BigDecimal) r[1]))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserRankingResponse> getDateRanking(LocalDate date) {
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.atTime(LocalTime.MAX);
+        List<UserPointLog> logs = userPointLogRepository.findByCreatedAtBetween(start, end);
+
+        return logs.stream()
+                .filter(log -> log.getPointType() == PointType.PREDICT)
+                .map(log -> new UserRankingResponse(
+                        log.getUser().getPhoneNumber(),
+                        log.getUser().getPoint()
+                ))
                 .toList();
     }
 }

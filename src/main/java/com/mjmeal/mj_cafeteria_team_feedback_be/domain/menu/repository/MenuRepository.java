@@ -10,4 +10,5 @@ import java.util.List;
 public interface MenuRepository extends JpaRepository<Menu, Long> {
     Menu findByName(String name);
     List<Menu> findTop8ByOrderByIdDesc();
+
 }
