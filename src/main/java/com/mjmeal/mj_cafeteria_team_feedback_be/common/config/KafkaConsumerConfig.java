@@ -15,13 +15,13 @@ import org.springframework.kafka.listener.ContainerProperties;
 @Slf4j
 public class KafkaConsumerConfig {
 
-    @Value("${kafka.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${kafka.consumer.group-id}")
+    @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
 
-    @Value("${kafka.properties.schema.registry.url}")
+    @Value("${spring.kafka.consumer.properties.schema.registry.url}")
     private String schemaRegistryUrl;
 
 
