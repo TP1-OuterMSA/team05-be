@@ -1,6 +1,5 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating;
 
-import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.entity.PredictRating;
 import com.mjmeal.mj_cafeteria_team_feedback_be.domain.rating.service.PredictedRatingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

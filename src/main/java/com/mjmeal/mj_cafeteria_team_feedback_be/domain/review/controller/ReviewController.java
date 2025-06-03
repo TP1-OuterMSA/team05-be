@@ -52,7 +52,7 @@ public class ReviewController {
     """
     )
     @GetMapping("{date}")
-    private ApiResponse<ReviewSummaryResponse> getReviewList(@PathVariable("date") LocalDate date, @RequestParam("mealType") MealType mealType) {
+    public ApiResponse<ReviewSummaryResponse> getReviewList(@PathVariable("date") LocalDate date, @RequestParam("mealType") MealType mealType) {
         return ApiResponse.onSuccess(reviewService.getTodayReviews(date, mealType));
     }
 
@@ -65,7 +65,7 @@ public class ReviewController {
     """
     )
     @GetMapping
-    private ApiResponse<ReviewSummaryResponse> getReviewList(@RequestParam("mealType") MealType mealType) {
+    public ApiResponse<ReviewSummaryResponse> getReviewList(@RequestParam("mealType") MealType mealType) {
         return ApiResponse.onSuccess(reviewService.getReviewSummary(mealType));
     }
 
@@ -76,7 +76,7 @@ public class ReviewController {
         """
     )
     @GetMapping("/token/{token}")
-    private ApiResponse<Boolean> getUseAble(@PathVariable("token") String token) {
+    public ApiResponse<Boolean> getUseAble(@PathVariable("token") String token) {
         return ApiResponse.onSuccess(reviewService.getUseAble(token));
     }
 
@@ -88,7 +88,7 @@ public class ReviewController {
     """
     )
     @GetMapping("/check/{token}")
-    private void registerToken(@PathVariable("token") String token) {
+    public void registerToken(@PathVariable("token") String token) {
         reviewService.registerToken(token);
     }
 }

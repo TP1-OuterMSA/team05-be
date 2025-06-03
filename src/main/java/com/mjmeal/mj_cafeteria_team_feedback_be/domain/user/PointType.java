@@ -1,6 +1,5 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.domain.user;
 
-import com.mjmeal.mj_cafeteria_team_feedback_be.domain.review.MealType;
 import lombok.Getter;
 
 @Getter
