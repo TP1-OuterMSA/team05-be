@@ -1,6 +1,7 @@
 package com.mjmeal.mj_cafeteria_team_feedback_be.common;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class S3Uploader {
@@ -34,6 +36,9 @@ public class S3Uploader {
 
     @PostConstruct
     public void init() {
+        log.info("S3Uploader 초기화 - bucket: {}", bucket);
+        log.info("S3Uploader 초기화 - folder: {}", folder);
+        log.info("S3Uploader 초기화 - accessKey: {}", accessKey);
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
         this.s3Client = S3Client.builder()
                 .region(Region.AP_NORTHEAST_2)
@@ -42,6 +47,7 @@ public class S3Uploader {
     }
 
     public String upload(MultipartFile file) {
+        log.info("S3Uploader 업로드 - accessKey: {}", accessKey);
         String originalFilename = file.getOriginalFilename();
         assert originalFilename != null;
         String extension = getExtension(originalFilename);
